@@ -33,7 +33,7 @@ export default class VideoList extends Component {
 
   _showYoutubeVideo = (videoId) => this.setState({
     isModalVisible: true,
-    videoUrl: 'https://www.youtube.com/embed/' + videoId + '?rel=0&autoplay=0&showinfo=0&controls=0'
+    videoUrl: 'https://www.youtube.com/embed/' + videoId
   })
 
   _hideYoutubeVideo = () => this.setState({ isModalVisible: false })
