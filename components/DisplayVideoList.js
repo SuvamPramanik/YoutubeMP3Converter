@@ -27,9 +27,16 @@ export default class VideoList extends Component {
   results = this.props.queryResult;
   state = {
     dataSource: this.ds.cloneWithRows(this.results),
-    modalVisible: true,
+    isModalVisible: false,
     videoUrl: ''
   };
+
+  _showYoutubeVideo = (videoId) => this.setState({
+    isModalVisible: true,
+    videoUrl: 'https://www.youtube.com/embed/' + videoId + '?rel=0&autoplay=0&showinfo=0&controls=0'
+  })
+
+  _hideYoutubeVideo = () => this.setState({ isModalVisible: false })
 
   render() {
     //console.log(this.results);
@@ -39,14 +46,18 @@ export default class VideoList extends Component {
         <Modal
         animationType={"slide"}
         transparent={true}
-        visible={this.state.modalVisible}
-        onRequestClose={() => {alert("Modal has been closed.")}}>
-        <View style={{width: Dimensions.get('window').width/1.2, height: Dimensions.get('window').height/4,}}>
+        visible={this.state.isModalVisible}>
+
+        <View style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height/3,}}>
         <WebView
         style={{flex:1}}
         javaScriptEnabled={true}
-        source={{uri: 'https://www.youtube.com/embed/ZZ5LpwO-An4?rel=0&autoplay=0&showinfo=0&controls=0'}}
+        source={{uri: this.state.videoUrl}}
         />
+        <Button
+              title="Close Video"
+              color="#841584"
+              onPress={this._hideYoutubeVideo} />
         </View>
         </Modal>
         <ScrollView scrollsToTop={false}>
@@ -73,7 +84,7 @@ export default class VideoList extends Component {
   renderVideo(item) {
     return (
       <TouchableHighlight underlayColor = {'white'}
-      onPress={()=> this.showYoutbeVideo()}>
+      onPress={()=> this._showYoutubeVideo(item.id.videoId)}>
       <View style={styles.container}>
       <Image
       source={{uri: item.snippet.thumbnails.default.url}}
@@ -85,10 +96,6 @@ export default class VideoList extends Component {
       </View>
       </TouchableHighlight>
     );
-  }
-
-  showYoutbeVideo() {
-    console.log(this.state.isOpen);
   }
 }
 
