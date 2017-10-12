@@ -35,20 +35,20 @@ export default class VideoList extends Component {
     //console.log(this.results);
     if(this.results && this.results.length) {
       return (
-        //<View>
-        // <Modal
-        // animationType={"slide"}
-        // transparent={true}
-        // visible={this.state.modalVisible}
-        // onRequestClose={() => {alert("Modal has been closed.")}}>
-        // <View style={{width: Dimensions.get('window').width/1.2, height: Dimensions.get('window').height/4,}}>
-        // <WebView
-        // style={{flex:1}}
-        // javaScriptEnabled={true}
-        // source={{uri: 'https://www.youtube.com/embed/ZZ5LpwO-An4?rel=0&autoplay=0&showinfo=0&controls=0'}}
-        // />
-        // </View>
-        // </Modal>
+        <View>
+        <Modal
+        animationType={"slide"}
+        transparent={true}
+        visible={this.state.modalVisible}
+        onRequestClose={() => {alert("Modal has been closed.")}}>
+        <View style={{width: Dimensions.get('window').width/1.2, height: Dimensions.get('window').height/4,}}>
+        <WebView
+        style={{flex:1}}
+        javaScriptEnabled={true}
+        source={{uri: 'https://www.youtube.com/embed/ZZ5LpwO-An4?rel=0&autoplay=0&showinfo=0&controls=0'}}
+        />
+        </View>
+        </Modal>
         <ScrollView scrollsToTop={false}>
         <ListView
         dataSource={this.state.dataSource}
@@ -57,7 +57,7 @@ export default class VideoList extends Component {
         initialListSize={15}
         />
         </ScrollView>
-        //</View>
+        </View>
       );
     }
     console.log("Inside empty array check");
