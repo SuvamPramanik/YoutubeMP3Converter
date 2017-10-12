@@ -18,8 +18,11 @@ import {
   ScrollView,
   Modal,
   WebView,
-  Dimensions
+  Dimensions,
+  Linking
 } from 'react-native';
+import Config from '../constants';
+import axios from 'axios';
 
 export default class VideoList extends Component {
   ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -27,28 +30,58 @@ export default class VideoList extends Component {
   results = this.props.queryResult;
   state = {
     dataSource: this.ds.cloneWithRows(this.results),
-    modalVisible: true,
+    isModalVisible: false,
     videoUrl: ''
   };
+
+  _showYoutubeVideo = (videoId) => this.setState({
+    isModalVisible: true,
+    videoUrl: 'https://www.youtube.com/embed/' + videoId
+  })
+
+  _hideYoutubeVideo = () => this.setState({ isModalVisible: false })
+
+  _downloadYoutubeVideo = (videoId) => {
+    axios.get(`${Config.API_URL}${videoId}`)
+       .then(function (response) {
+       let url = response.data.resultURL;
+       console.log(url);
+       Linking.canOpenURL(url).then(supported => {
+       if (supported) {
+         Linking.openURL(url);
+       } else {
+         console.log("Don't know how to open URI: " + url);
+       }
+     });
+    })
+     .catch(function (error) {
+       console.log(error);
+   });
+  }
 
   render() {
     //console.log(this.results);
     if(this.results && this.results.length) {
       return (
-        //<View>
-        // <Modal
-        // animationType={"slide"}
-        // transparent={true}
-        // visible={this.state.modalVisible}
-        // onRequestClose={() => {alert("Modal has been closed.")}}>
-        // <View style={{width: Dimensions.get('window').width/1.2, height: Dimensions.get('window').height/4,}}>
-        // <WebView
-        // style={{flex:1}}
-        // javaScriptEnabled={true}
-        // source={{uri: 'https://www.youtube.com/embed/ZZ5LpwO-An4?rel=0&autoplay=0&showinfo=0&controls=0'}}
-        // />
-        // </View>
-        // </Modal>
+        <View>
+        <Modal
+        animationType={"slide"}
+        transparent={true}
+        visible={this.state.isModalVisible}
+        onRequestClose={() => {console.log('Youtube Video Closed!');}}>
+
+        <View style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height/2.,}}>
+        <WebView
+        style={{flex:1}}
+        javaScriptEnabled={true}
+        source={{uri: this.state.videoUrl}}
+        />
+        <Button
+              title="Close Video"
+              color="#841584"
+              onPress={this._hideYoutubeVideo} />
+        </View>
+        </Modal>
         <ScrollView scrollsToTop={false}>
         <ListView
         dataSource={this.state.dataSource}
@@ -57,7 +90,7 @@ export default class VideoList extends Component {
         initialListSize={15}
         />
         </ScrollView>
-        //</View>
+        </View>
       );
     }
     console.log("Inside empty array check");
@@ -72,8 +105,9 @@ export default class VideoList extends Component {
 
   renderVideo(item) {
     return (
+      <View>
       <TouchableHighlight underlayColor = {'white'}
-      onPress={()=> this.showYoutbeVideo()}>
+      onPress={()=> this._showYoutubeVideo(item.id.videoId)}>
       <View style={styles.container}>
       <Image
       source={{uri: item.snippet.thumbnails.default.url}}
@@ -84,11 +118,10 @@ export default class VideoList extends Component {
       </View>
       </View>
       </TouchableHighlight>
+      <Button title="Download"
+        onPress={() => this._downloadYoutubeVideo(item.id.videoId)}/>
+      </View>
     );
-  }
-
-  showYoutbeVideo() {
-    console.log(this.state.isOpen);
   }
 }
 
