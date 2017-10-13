@@ -14,7 +14,8 @@
    ListView,
    Image,
    Button,
-   TouchableHighlight
+   TouchableHighlight,
+   Dimensions
  } from 'react-native';
  import Config from './constants';
  import axios from 'axios';
@@ -32,7 +33,6 @@
      //console.log(`${Config.SEARCH_API_URL}${searchQuery}`);
      axios.get(`${Config.SEARCH_API_URL}${searchQuery}`)
      .then(function (response) {
-       console.log(response.data.items);
        vm.setState({
            queryResult: response.data.items,
            isLoaded: true
@@ -43,6 +43,7 @@
        console.log(error);
      });
    }
+
 
    render() {
      return (
@@ -58,7 +59,8 @@
              </View>
              <View style={styles.searchButtonContainer} >
                <TouchableHighlight
-                 underlayColor = {'white'}
+                 style= {styles.searchButton}
+                 underlayColor = {'#8E8E8E'}
                  onPress= {() => this.fetchVideos(this.state.searchQuery)}>
                  <Image
                  source={require('./assets/search_icon.png')}
@@ -82,12 +84,22 @@
      paddingTop: 20,
      backgroundColor: 'white'
    },
+   searchButton: {
+     borderColor: 'black',
+     backgroundColor: 'white',
+     borderWidth: StyleSheet.hairlineWidth,
+     paddingHorizontal: 20,
+     paddingVertical: 10,
+     borderRadius: 5,
+   },
    searchContainer: {
      flexDirection: 'row',
      //borderBottomWidth: 0.5,
    },
    searchInputContainer: {
-       width: 300,
+       width: Dimensions.get('window').width-90,
+       //marginLeft: 10,
+       marginRight: 10,
        height: 60
    },
    searchButtonContainer: {
