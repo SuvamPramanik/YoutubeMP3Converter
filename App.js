@@ -25,17 +25,22 @@
    state = {
      searchQuery: '',
      isLoaded: false,
-     queryResult: ''
+     queryResult: '',
+     loading: true,
    };
 
    fetchVideos = (searchQuery) => {
+     this.setState({
+       loading: true
+     });
      const vm = this;
      //console.log(`${Config.SEARCH_API_URL}${searchQuery}`);
      axios.get(`${Config.SEARCH_API_URL}${searchQuery}`)
      .then(function (response) {
        vm.setState({
            queryResult: response.data.items,
-           isLoaded: true
+           isLoaded: true,
+           loading: false
        });
        return response.data;
      })
@@ -46,6 +51,7 @@
 
 
    render() {
+     console.log(this.state.loading);
      return (
        <View style={styles.homeContainer}>
        <View style={styles.searchContainer} >
@@ -69,7 +75,7 @@
              </View>
         </View>
         <View>
-        {this.state.isLoaded ? <VideoList queryResult = {this.state.queryResult} /> : null}
+        {this.state.isLoaded ? <VideoList isLoading={this.state.loading} queryResult = {this.state.queryResult} /> : null}
         </View>
         </View>
     );

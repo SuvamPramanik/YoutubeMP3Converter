@@ -19,7 +19,8 @@ import {
   Modal,
   WebView,
   Dimensions,
-  Linking
+  Linking,
+  ActivityIndicator
 } from 'react-native';
 import Config from '../constants';
 import axios from 'axios';
@@ -33,7 +34,7 @@ export default class VideoList extends Component {
     dataSource: this.ds.cloneWithRows(this.results.slice(0, 10)),
     page: 1,
     isModalVisible: false,
-    videoUrl: ''
+    videoUrl: '',
   };
 
   loadMore = () => {
@@ -46,78 +47,84 @@ export default class VideoList extends Component {
     this.setState({
       page: this.state.page + 1,
       dataSource: this.ds.cloneWithRows(this.results.slice(0, end))}); // here we are appending new batch to existing batch
-    //console.log(this.state.dataSource);
-  }
-
-  _showYoutubeVideo = (videoId) => this.setState({
-    isModalVisible: true,
-    videoUrl: 'https://www.youtube.com/embed/' + videoId
-  })
-
-  _hideYoutubeVideo = () => this.setState({ isModalVisible: false })
-
-  _downloadYoutubeVideo = (videoId) => {
-    axios.get(`${Config.API_URL}${videoId}`)
-       .then(function (response) {
-       let url = response.data.resultURL;
-       console.log(url);
-       Linking.canOpenURL(url).then(supported => {
-       if (supported) {
-         Linking.openURL(url);
-       } else {
-         console.log("Don't know how to open URI: " + url);
-       }
-     });
-    })
-     .catch(function (error) {
-       console.log(error);
-   });
-  }
-
-  render() {
-    console.log('New results', this.results);
-    if(this.results && this.results.length) {
-      return (
-        <View>
-        <Modal
-        animationType={"slide"}
-        transparent={true}
-        visible={this.state.isModalVisible}
-        onRequestClose={() => {console.log('Youtube Video Closed!');}}>
-
-        <View style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height/2.,}}>
-        <WebView
-        style={{flex:1}}
-        javaScriptEnabled={true}
-        source={{uri: this.state.videoUrl}}
-        />
-        <Button
-              title="Close Video"
-              color="#841584"
-              onPress={this._hideYoutubeVideo} />
-        </View>
-        </Modal>
-        <ScrollView scrollsToTop={false}>
-        <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderVideo.bind(this)}
-        renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
-        style={styles.listView}
-        onEndReachedThreshold={10}
-        pageSize={10}
-        initialListSize={10}
-        onEndReached={this.loadMore}
-        />
-        </ScrollView>
-        </View>
-      );
+      //console.log(this.state.dataSource);
     }
-    console.log("Inside empty array check");
-    return (
-      <Text style={styles.noVideosFoundContainer}>
-      No videos found!! Try again.
-      </Text>
-    );
+
+    _showYoutubeVideo = (videoId) => this.setState({
+      isModalVisible: true,
+      videoUrl: 'https://www.youtube.com/embed/' + videoId
+    })
+
+    _hideYoutubeVideo = () => this.setState({ isModalVisible: false })
+
+    _downloadYoutubeVideo = (videoId) => {
+      axios.get(`${Config.API_URL}${videoId}`)
+      .then(function (response) {
+        let url = response.data.resultURL;
+        console.log(url);
+        Linking.canOpenURL(url).then(supported => {
+          if (supported) {
+            Linking.openURL(url);
+          } else {
+            console.log("Don't know how to open URI: " + url);
+          }
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    }
+
+    render() {
+      console.log("loading: ", this.props.isLoading);
+      //console.log('New results', this.results);
+
+      if(this.props.isLoading) {
+        return (
+          <ActivityIndicator size="large" animating={true}/>
+        );
+      }
+      if(this.results.length) {
+        return (
+          <View>
+          <Modal
+          animationType={"slide"}
+          transparent={true}
+          visible={this.state.isModalVisible}
+          onRequestClose={() => {console.log('Youtube Video Closed!');}}>
+
+          <View style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height/2.,}}>
+          <WebView
+          style={{flex:1}}
+          javaScriptEnabled={true}
+          source={{uri: this.state.videoUrl}}
+          />
+          <Button
+          title="Close Video"
+          color="#841584"
+          onPress={this._hideYoutubeVideo} />
+          </View>
+          </Modal>
+          <ScrollView scrollsToTop={false}>
+          <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this.renderVideo.bind(this)}
+          renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
+          style={styles.listView}
+          onEndReachedThreshold={10}
+          pageSize={10}
+          initialListSize={10}
+          onEndReached={this.loadMore}
+          />
+          </ScrollView>
+          </View>
+        );
+      }
+      return (
+        <Text style={styles.noVideosFoundContainer}>
+        No videos found!! Try again.
+        </Text>
+      );
   }
 
 
@@ -139,10 +146,10 @@ export default class VideoList extends Component {
       <Text numberOfLines={1} style={styles.title}>{item.snippet.title || "Unknown Song"}</Text>
       <View style={styles.downloadButton}>
       <Button
-        //style={styles.downloadButton}
-        title="Download"
-        onPress={() => this._downloadYoutubeVideo(item.id.videoId)}/>
-        </View>
+      //style={styles.downloadButton}
+      title="Download"
+      onPress={() => this._downloadYoutubeVideo(item.id.videoId)}/>
+      </View>
       </View>
       </View>
       </TouchableHighlight>
