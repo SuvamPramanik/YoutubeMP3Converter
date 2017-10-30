@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+   <item>
+        <bitmap android:src="@drawable/screen" android:gravity="fill" />
+            <item name="android:windowTranslucentStatus">true</item>
+    </item>
+
+</layer-list>

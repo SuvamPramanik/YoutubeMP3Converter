@@ -15,32 +15,31 @@
    Image,
    Button,
    TouchableHighlight,
-   Dimensions
+   Dimensions,
+   ActivityIndicator
  } from 'react-native';
  import Config from './constants';
  import axios from 'axios';
- import VideoList from './components/DisplayVideoList'
+ import VideoList from './components/DisplayVideoList';
 
  export default class YoutubeAudioConverter extends Component {
    state = {
      searchQuery: '',
-     isLoaded: false,
+     isLoaded: true,
      queryResult: '',
-     loading: true,
    };
 
    fetchVideos = (searchQuery) => {
-     this.setState({
-       loading: true
-     });
      const vm = this;
+     vm.setState({
+         isLoaded: false
+     });
      //console.log(`${Config.SEARCH_API_URL}${searchQuery}`);
      axios.get(`${Config.SEARCH_API_URL}${searchQuery}`)
      .then(function (response) {
        vm.setState({
            queryResult: response.data.items,
-           isLoaded: true,
-           loading: false
+           isLoaded: true
        });
        return response.data;
      })
@@ -49,19 +48,36 @@
      });
    }
 
+   handleClearSeachTextInput = () => {
+     this.setState({
+       searchQuery: '',
+     });
+   }
+
 
    render() {
-     console.log(this.state.loading);
      return (
        <View style={styles.homeContainer}>
        <View style={styles.searchContainer} >
            <View style={styles.searchInputContainer}>
              <TextInput
-               //underlineColorAndroid='transparent'
+               style={styles.searchInputBox}
+               underlineColorAndroid='transparent'
                placeholder="Search YouTube"
                value={this.state.searchQuery}
                onChangeText={(searchQuery) => this.setState({searchQuery})}
                />
+               {
+                 this.state.searchQuery ?
+                  <TouchableHighlight
+                    style= {styles.clearInput}
+                    underlayColor = {'#8E8E8E'}
+                    onPress= {() => this.handleClearSeachTextInput()}>
+                    <Image
+                      source={require('./assets/clear.png')}
+                    />
+                  </TouchableHighlight> : null
+               }
              </View>
              <View style={styles.searchButtonContainer} >
                <TouchableHighlight
@@ -75,7 +91,7 @@
              </View>
         </View>
         <View>
-        {this.state.isLoaded ? <VideoList isLoading={this.state.loading} queryResult = {this.state.queryResult} /> : null}
+        {this.state.isLoaded ? <VideoList queryResult = {this.state.queryResult} /> : <ActivityIndicator size="large" animating={true}/>}
         </View>
         </View>
     );
@@ -85,7 +101,6 @@
  const styles = StyleSheet.create({
    homeContainer: {
      flex: 1,
-     alignItems: 'center',
      paddingBottom: 100,
      paddingTop: 20,
      backgroundColor: 'white'
@@ -103,12 +118,22 @@
      //borderBottomWidth: 0.5,
    },
    searchInputContainer: {
+       flexDirection: 'row',
        width: Dimensions.get('window').width-90,
-       //marginLeft: 10,
+       borderBottomWidth: 1,
+       borderBottomColor: 'black',
+       marginLeft: 10,
        marginRight: 10,
-       height: 60
+   },
+   searchInputBox: {
+     flexDirection: 'row',
+     width: Dimensions.get('window').width-120,
+   },
+   clearInput: {
+     alignSelf: 'flex-end',
    },
    searchButtonContainer: {
+     alignSelf: 'flex-end',
      width: 60,
      height: 60
    },

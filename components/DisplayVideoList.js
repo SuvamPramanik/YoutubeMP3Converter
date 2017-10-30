@@ -76,14 +76,8 @@ export default class VideoList extends Component {
     }
 
     render() {
-      console.log("loading: ", this.props.isLoading);
       //console.log('New results', this.results);
 
-      if(this.props.isLoading) {
-        return (
-          <ActivityIndicator size="large" animating={true}/>
-        );
-      }
       if(this.results.length) {
         return (
           <View>
