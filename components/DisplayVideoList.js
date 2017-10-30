@@ -24,7 +24,7 @@ import {
 } from 'react-native';
 import Config from '../constants';
 import axios from 'axios';
-import Footer from './LoadMoreFooter'
+import Footer from './LoadMoreFooter';
 
 export default class VideoList extends Component {
   ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -188,7 +188,8 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     borderBottomWidth: 5,
   },
-  noVideosFoundContainer: {                                                                                                                                                fontSize: 18,
+  noVideosFoundContainer: {
+    marginTop: 25,                                                                                                                                               fontSize: 18,
     textAlign: 'center',
   },
   separator: {

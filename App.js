@@ -79,7 +79,7 @@
                   </TouchableHighlight> : null
                }
              </View>
-             <View style={styles.searchButtonContainer} >
+             <View>
                <TouchableHighlight
                  style= {styles.searchButton}
                  underlayColor = {'#8E8E8E'}
@@ -91,7 +91,7 @@
              </View>
         </View>
         <View>
-        {this.state.isLoaded ? <VideoList queryResult = {this.state.queryResult} /> : <ActivityIndicator size="large" animating={true}/>}
+        {this.state.isLoaded ? <VideoList queryResult = {this.state.queryResult} /> : <ActivityIndicator style={{marginTop: 25}} size="large" animating={true}/>}
         </View>
         </View>
     );
@@ -109,8 +109,10 @@
      borderColor: 'black',
      backgroundColor: 'white',
      borderWidth: StyleSheet.hairlineWidth,
-     paddingHorizontal: 20,
-     paddingVertical: 10,
+     paddingTop: 10,
+     paddingBottom: 10,
+     paddingLeft: 10,
+     paddingRight: 10,
      borderRadius: 5,
    },
    searchContainer: {
@@ -120,21 +122,18 @@
    searchInputContainer: {
        flexDirection: 'row',
        width: Dimensions.get('window').width-90,
-       borderBottomWidth: 1,
-       borderBottomColor: 'black',
+       elevation: 3,
+       borderRadius: 5,
        marginLeft: 10,
        marginRight: 10,
    },
    searchInputBox: {
      flexDirection: 'row',
+     paddingLeft: 10,
      width: Dimensions.get('window').width-120,
    },
    clearInput: {
      alignSelf: 'flex-end',
-   },
-   searchButtonContainer: {
-     alignSelf: 'flex-end',
-     width: 60,
-     height: 60
+     paddingBottom: 15,
    },
  });
